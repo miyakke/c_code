@@ -45,15 +45,15 @@ def analyze():
             #if isinstance(node.type.args, c_ast.ParamList):
                 # if isinstance(node.type.args.params.type, c_ast.PtrDecl):
                     #print(f"引数:*"{node.type.args.params.type.type.declname}")
-    except Exception as e:
-        import traceback
-        traceback.print_exc()  # 詳細なエラーを出力
-        return f"サーバーエラー: {e}", 500
-    finally:
-        try:
-            os.remove(tmp_path)  # 一時ファイル削除
-        except:
-            pass
+ except Exception as e:
+    import traceback
+    traceback.print_exc()  # 詳細なエラーを出力
+    return f"サーバーエラー: {e}", 500
+ finally:
+    try:
+        os.remove(tmp_path)  # 一時ファイル削除
+    except:
+        pass
 
     #fake_include = os.path.join(pycparser.__path__[0], 'utils', 'fake_libc_include')
     ast = parse_file(tmp_path,use_cpp=True)
