@@ -11,7 +11,11 @@ def index():
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
+ try
     c_code = request.data.decode()
+    
+    print(f"受信したコード:\n{c_code}")
+    
     with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as tmp:
         tmp.write(c_code)
         tmp_path = tmp.name
@@ -41,6 +45,15 @@ def analyze():
             #if isinstance(node.type.args, c_ast.ParamList):
                 # if isinstance(node.type.args.params.type, c_ast.PtrDecl):
                     #print(f"引数:*"{node.type.args.params.type.type.declname}")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()  # 詳細なエラーを出力
+        return f"サーバーエラー: {e}", 500
+    finally:
+        try:
+            os.remove(tmp_path)  # 一時ファイル削除
+        except:
+            pass
 
     #fake_include = os.path.join(pycparser.__path__[0], 'utils', 'fake_libc_include')
     ast = parse_file(tmp_path,use_cpp=True)
