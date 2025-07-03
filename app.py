@@ -2,6 +2,7 @@ from pycparser import parse_file, c_ast
 import os
 import pycparser
 from flask import Flask, request
+import tempfile
 
 app = Flask(__name__)
 @app.route('/')
@@ -11,6 +12,9 @@ def index():
 @app.route('/analyze', methods=['POST'])
 def analyze():
     c_code = request.data.decode()
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.c', delete=False) as tmp:
+        tmp.write(c_code)
+        tmp_path = tmp.name
 
     class VariableVisitor(c_ast.NodeVisitor):
 
@@ -39,7 +43,7 @@ def analyze():
                     #print(f"引数:*"{node.type.args.params.type.type.declname}")
 
     #fake_include = os.path.join(pycparser.__path__[0], 'utils', 'fake_libc_include')
-    ast = parse_file(c_code,use_cpp=True)
+    ast = parse_file(tmp_path,use_cpp=True)
     visitor = VariableVisitor()
     visitor.visit(ast)
     return ast
