@@ -11,7 +11,7 @@ def index():
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
- try
+ try:
     c_code = request.data.decode()
     
     print(f"受信したコード:\n{c_code}")
