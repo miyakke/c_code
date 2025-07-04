@@ -45,6 +45,12 @@ def analyze():
             #if isinstance(node.type.args, c_ast.ParamList):
                 # if isinstance(node.type.args.params.type, c_ast.PtrDecl):
                     #print(f"引数:*"{node.type.args.params.type.type.declname}")
+
+    #fake_include = os.path.join(pycparser.__path__[0], 'utils', 'fake_libc_include')
+    ast = parse_file(tmp_path,use_cpp=True)
+    visitor = VariableVisitor()
+    visitor.visit(ast)
+    return ast
  except Exception as e:
     import traceback
     traceback.print_exc()  # 詳細なエラーを出力
@@ -54,12 +60,6 @@ def analyze():
         os.remove(tmp_path)  # 一時ファイル削除
     except:
         pass
-
-    #fake_include = os.path.join(pycparser.__path__[0], 'utils', 'fake_libc_include')
-    ast = parse_file(tmp_path,use_cpp=True)
-    visitor = VariableVisitor()
-    visitor.visit(ast)
-    return ast
 #ast.show()
 if __name__ == '__main__':
     app.run(debug=True)
