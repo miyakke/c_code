@@ -3,6 +3,8 @@ import os
 import pycparser
 from flask import Flask, request
 import tempfile
+import io
+from contextlib import redirect_stdout
 
 app = Flask(__name__)
 @app.route('/')
@@ -50,7 +52,13 @@ def analyze():
     ast = parse_file(tmp_path,use_cpp=True)
     visitor = VariableVisitor()
     visitor.visit(ast)
-    return ast
+     
+    f = io.StringIO()
+    with redirect_stdout(f):
+        ast.show()
+    ast_str = f.getvalue()
+
+    return ast_str
  except Exception as e:
     import traceback
     traceback.print_exc()  # 詳細なエラーを出力
